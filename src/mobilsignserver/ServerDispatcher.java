@@ -48,6 +48,7 @@ public class ServerDispatcher extends Thread {
      */
     public synchronized void dispatchMessage(ClientInfo aClientInfo, String aMessage)
     {
+        System.out.println(aMessage);
         if (aMessage.length() > 5 && aMessage.substring(0, 5).equals("SEND:")) {
             if (aClientInfo.pair != null) {
                 aClientInfo.pair.mClientSender.sendMessage(aMessage);
