@@ -6,6 +6,9 @@ package mobilsignserver;
 
 import java.io.*;
 import java.net.*;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocket;
 //import javax.net.ssl.SSLServerSocket;
 //import javax.net.ssl.SSLServerSocketFactory;
 //import javax.net.ssl.SSLSocket;
@@ -22,16 +25,20 @@ public class MobilSignServer {
  
     public static void main(String[] args)
     {
+        
+        System.setProperty("javax.net.ssl.keyStore","keystore.jks");
+        System.setProperty("javax.net.ssl.keyStorePassword","mobilsign123");
+        
         // SSL
-//        SSLServerSocketFactory factory=(SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
-//        SSLServerSocket sslserversocket = null;
+        SSLServerSocketFactory factory=(SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+        SSLServerSocket sslserversocket = null;
         
         // Open server socket for listening
         ServerSocket serverSocket = null;
         try {
-           //sslserversocket = (SSLServerSocket)factory.createServerSocket(LISTENING_PORT);
+           sslserversocket = (SSLServerSocket)factory.createServerSocket(LISTENING_PORT);
             
-           serverSocket = new ServerSocket(LISTENING_PORT);
+           //serverSocket = new ServerSocket(LISTENING_PORT);
            System.out.println("Server started on port " + LISTENING_PORT);
         } catch (IOException se) {
            System.err.println("Can not start listening on port " + LISTENING_PORT);
@@ -46,11 +53,11 @@ public class MobilSignServer {
         // Accept and handle client connections
         while (true) {
            try {
-               //SSLSocket sslsocket = (SSLSocket)sslserversocket.accept();
+               SSLSocket sslsocket = (SSLSocket)sslserversocket.accept();
                
-               Socket socket = serverSocket.accept();
+               //Socket socket = serverSocket.accept();
                ClientInfo clientInfo = new ClientInfo();
-               clientInfo.mSocket = socket;
+               clientInfo.mSocket = sslsocket;
                ClientListener clientListener =
                    new ClientListener(clientInfo, serverDispatcher);
                ClientSender clientSender =
