@@ -6,9 +6,6 @@ package mobilsignserver;
 
 import java.io.*;
 import java.net.*;
-import javax.net.ssl.SSLServerSocket;
-import javax.net.ssl.SSLServerSocketFactory;
-import javax.net.ssl.SSLSocket;
 //import javax.net.ssl.SSLServerSocket;
 //import javax.net.ssl.SSLServerSocketFactory;
 //import javax.net.ssl.SSLSocket;
@@ -26,17 +23,18 @@ public class MobilSignServer {
     public static void main(String[] args)
     {
         
-        System.setProperty("javax.net.ssl.keyStore","keystore.jks");
-        System.setProperty("javax.net.ssl.keyStorePassword","mobilsign123");
+        //System.setProperty("javax.net.ssl.keyStore","keystore.jks");
+        //System.setProperty("javax.net.ssl.keyStorePassword","mobilsign123");
         
         // SSL
-        SSLServerSocketFactory factory=(SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
-        SSLServerSocket sslserversocket = null;
+        
+        //SSLServerSocketFactory factory=(SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+        ServerSocket serversocket = null;
         
         // Open server socket for listening
         ServerSocket serverSocket = null;
         try {
-           sslserversocket = (SSLServerSocket)factory.createServerSocket(LISTENING_PORT);
+           serversocket = new ServerSocket(LISTENING_PORT);
             
            //serverSocket = new ServerSocket(LISTENING_PORT);
            System.out.println("Server started on port " + LISTENING_PORT);
@@ -53,22 +51,15 @@ public class MobilSignServer {
         // Accept and handle client connections
         while (true) {
            try {
-               SSLSocket sslsocket = (SSLSocket)sslserversocket.accept();
-               
+               Socket socket = serversocket.accept();               
                //Socket socket = serverSocket.accept();
-               ClientInfo clientInfo = new ClientInfo();
-               clientInfo.mSocket = sslsocket;
-               ClientListener clientListener =
-                   new ClientListener(clientInfo, serverDispatcher);
-               ClientSender clientSender =
-                   new ClientSender(clientInfo, serverDispatcher);
-               clientInfo.mClientListener = clientListener;
-               clientInfo.mClientSender = clientSender;
-               clientListener.start();
-               clientSender.start();
+               ClientInfo clientInfo = new ClientInfo(socket);
+               clientInfo.getClientListener().start();
+               clientInfo.getClientSender().start();
                serverDispatcher.addClient(clientInfo);
+               synchronized(serverDispatcher){serverDispatcher.notify();}            
            } catch (IOException ioe) {
-               ioe.printStackTrace();
+               System.err.println("Nastala chyba pri spustani servera");
            }
         }
     }

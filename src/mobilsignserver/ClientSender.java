@@ -6,7 +6,7 @@ package mobilsignserver;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  *
@@ -14,19 +14,17 @@ import java.util.*;
  */
 public class ClientSender  extends Thread {
     
-    private Vector mMessageQueue = new Vector();
- 
-    private ServerDispatcher mServerDispatcher;
-    private ClientInfo mClientInfo;
+    private LinkedBlockingQueue mMessageQueue; 
     private PrintWriter mOut;
  
-    public ClientSender(ClientInfo aClientInfo, ServerDispatcher aServerDispatcher)
-    throws IOException
-    {
-        mClientInfo = aClientInfo;
-        mServerDispatcher = aServerDispatcher;
-        Socket socket = aClientInfo.mSocket;
+    public ClientSender(Socket socket){
+       try{
         mOut = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
+        mMessageQueue = new LinkedBlockingQueue<>();
+       }
+       catch(IOException ex){
+           System.err.println("Vyskytla sa chyba pri vytvarani clientSendera");
+       }
     }
  
     /**
@@ -36,7 +34,12 @@ public class ClientSender  extends Thread {
      */
     public synchronized void sendMessage(String aMessage)
     {
-        mMessageQueue.add(aMessage);
+        try{
+            mMessageQueue.put(aMessage);
+        }
+        catch(InterruptedException ex){
+            System.err.println("Vyskytla sa chyba pri vkladani spravy do frontu sprav na odoslanie");
+        }
         notify();
     }
  
@@ -47,10 +50,10 @@ public class ClientSender  extends Thread {
      */
     private synchronized String getNextMessageFromQueue() throws InterruptedException
     {
-        while (mMessageQueue.size()==0)
+        while (mMessageQueue.isEmpty()){
            wait();
-        String message = (String) mMessageQueue.get(0);
-        mMessageQueue.removeElementAt(0);
+        }
+        String message = (String) mMessageQueue.poll();
         return message;
     }
  
@@ -67,6 +70,7 @@ public class ClientSender  extends Thread {
      * Until interrupted, reads messages from the message queue
      * and sends them to the client's socket.
      */
+    @Override
     public void run()
     {
         try {
@@ -76,10 +80,6 @@ public class ClientSender  extends Thread {
            }
         } catch (Exception e) {
            // Commuication problem
-        }
- 
-        // Communication is broken. Interrupt both listener and sender threads
-        mClientInfo.mClientListener.interrupt();
-        mServerDispatcher.deleteClient(mClientInfo);
+        }       
     }
 }
