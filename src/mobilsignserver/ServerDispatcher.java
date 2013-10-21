@@ -105,7 +105,7 @@ public class ServerDispatcher extends Thread {
     public synchronized void run() {
         try {
             while (true) {
-                System.out.println("CITAM");
+//                System.out.println("CITAM");
                 if (mClients.isEmpty()) {
                     wait();
                 }
