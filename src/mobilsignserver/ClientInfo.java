@@ -5,6 +5,7 @@
 package mobilsignserver;
 
 import java.net.Socket;
+import communicator.*;
 
 /**
  *
@@ -13,15 +14,15 @@ import java.net.Socket;
 public class ClientInfo {
     
     private Socket mSocket = null;
-    private ClientListener mClientListener = null;
-    private ClientSender mClientSender = null;
+    private Listener mClientListener = null;
+    private Sender mClientSender = null;
     private String mFingerprint = null;
     private ClientInfo mPair = null;
     
     public ClientInfo(Socket socket){
        this.mSocket = socket;
-       this.mClientListener = new ClientListener(mSocket);
-       this.mClientSender =   new ClientSender(mSocket);
+       this.mClientListener = new Listener(mSocket);
+       this.mClientSender =   new Sender(mSocket);
        
     }
     
@@ -29,11 +30,11 @@ public class ClientInfo {
         this.mSocket = socket;
     }
     
-    protected void setClientListener(ClientListener listener){
+    protected void setClientListener(Listener listener){
         this.mClientListener = listener;
     }
     
-    protected void setClientSender(ClientSender sender){
+    protected void setClientSender(Sender sender){
         this.mClientSender = sender;
     }
     
@@ -46,11 +47,11 @@ public class ClientInfo {
     }
     
     
-    protected ClientListener getClientListener(){
+    protected Listener getClientListener(){
         return this.mClientListener;
     }
     
-    protected ClientSender getClientSender(){
+    protected Sender getClientSender(){
         return this.mClientSender;
     }
     

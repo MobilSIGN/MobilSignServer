@@ -5,9 +5,7 @@
 package mobilsignserver;
 
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+//import communicator.*;
 /**
  *
  * @author Marek Spalek <marekspalek@gmail.com>
@@ -110,7 +108,6 @@ public class ServerDispatcher extends Thread {
                     wait();
                 }
                 for (ClientInfo client : mClients) {
-
                     if (client.getClientListener().hasMessage()) {
                         this.dispatchMessage(client);
                     }
