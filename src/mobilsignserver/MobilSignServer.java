@@ -27,10 +27,10 @@ public class MobilSignServer {
         ServerSocket serversocket = null;
 
         try {
-            SSLServerSocketFactory sslserversocketfactory =
-                    (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
-            serversocket = (SSLServerSocket) sslserversocketfactory.createServerSocket(LISTENING_PORT);
-            //serversocket = new ServerSocket(LISTENING_PORT);
+//            SSLServerSocketFactory sslserversocketfactory =
+//                    (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+//            serversocket = (SSLServerSocket) sslserversocketfactory.createServerSocket(LISTENING_PORT);
+            serversocket = new ServerSocket(LISTENING_PORT);
 
             System.out.println("Server started on port " + LISTENING_PORT);
         } catch (IOException se) {
@@ -50,7 +50,9 @@ public class MobilSignServer {
                 //Socket socket = serverSocket.accept();
                 ClientInfo clientInfo = new ClientInfo(socket);
                 clientInfo.getClientListener().start();
+                System.out.println("Start ClientListnere");
                 clientInfo.getClientSender().start();
+                System.out.println("Start ClientSender");
                 serverDispatcher.addClient(clientInfo);
                 synchronized (serverDispatcher) {
                     serverDispatcher.notify();

@@ -5,6 +5,7 @@
 package mobilsignserver;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 //import communicator.*;
 /**
  *
@@ -12,16 +13,16 @@ import java.util.*;
  */
 public class ServerDispatcher extends Thread {
 
-    private ArrayList<ClientInfo> mClients;
+    private CopyOnWriteArrayList<ClientInfo> mClients;
 
     public ServerDispatcher() {
-        mClients = new ArrayList<>();
+        mClients = new CopyOnWriteArrayList<>();
     }
 
     /**
      * Adds given client to the server's client list.
      */
-    public synchronized void addClient(ClientInfo aClientInfo) {
+    public void addClient(ClientInfo aClientInfo) {
         System.out.println("Client connected: " + aClientInfo.getSocket().getInetAddress().getHostAddress());
         mClients.add(aClientInfo);
     }
@@ -30,7 +31,7 @@ public class ServerDispatcher extends Thread {
      * Deletes given client from the server's client list if the client is in
      * the list.
      */
-    public synchronized void deleteClient(ClientInfo aClientInfo) {
+    public void deleteClient(ClientInfo aClientInfo) {
         if (mClients.contains(aClientInfo)) { //ak sa klient nachadza na serveri
             if (aClientInfo.getPairedClient() != null) {
                 aClientInfo.setPairedClient(null);
@@ -47,7 +48,7 @@ public class ServerDispatcher extends Thread {
      * method). dispatchMessage method is called by other threads
      * (ClientListener) when a message is arrived.
      */
-    public synchronized void dispatchMessage(ClientInfo aClientInfo) {
+    public void dispatchMessage(ClientInfo aClientInfo) {
         String aMessage = aClientInfo.getClientListener().getMessage();
         if (aMessage == null) { //dodatocna kontrola
             return;
@@ -56,6 +57,7 @@ public class ServerDispatcher extends Thread {
         if (aMessage.length() > 5 && aMessage.substring(0, 5).equals("SEND:")) {
             if (aClientInfo.getPairedClient() != null) {
                 aClientInfo.getPairedClient().getClientSender().sendMessage(aMessage);
+                System.out.println("Su sparovani a poslal som spravu");
             } else {
                 System.out.println("Client is not paired!");
             }
@@ -63,6 +65,7 @@ public class ServerDispatcher extends Thread {
             return;
         }
         if (aMessage.length() > 5 && aMessage.substring(0, 5).equals("PAIR:")) {
+            System.out.println("Som dispatcher, prislo mi PAIR");
             String fingerprint = aMessage.substring(5);
             ClientInfo pairClient = this.clientWithFingerprint(fingerprint);
             aClientInfo.setFingerprint(fingerprint);
@@ -77,13 +80,13 @@ public class ServerDispatcher extends Thread {
      * message is added to theServerDispatcher.java:116 client sender thread's
      * message queue and this client sender thread is notified.
      */
-    private synchronized void sendMessageToAllClients(String aMessage) {
+    private void sendMessageToAllClients(String aMessage) {
         for (ClientInfo client : mClients) {
             client.getClientSender().sendMessage(aMessage);
         }
     }
 
-    private synchronized ClientInfo clientWithFingerprint(String fingerprint) {
+    private ClientInfo clientWithFingerprint(String fingerprint) {
         System.out.println("Clients: " + mClients.size());
         for (Object object : mClients) {
             ClientInfo client = (ClientInfo) object;
@@ -103,18 +106,23 @@ public class ServerDispatcher extends Thread {
     public synchronized void run() {
         try {
             while (true) {
-//                System.out.println("CITAM");
+                System.out.println("CITAM");
                 if (mClients.isEmpty()) {
+                    System.out.println("Cakam");
                     wait();
                 }
                 for (ClientInfo client : mClients) {
+                    System.out.println("Idem cez klienta");
                     if (client.getClientListener().hasMessage()) {
                         this.dispatchMessage(client);
+                        System.out.println("Poslal som spravu na spracovanie");
                     }
                     wait(10);
                 }
             }
         } catch (Exception e) {
+            System.err.println("Dispatcher exception");
+            e.printStackTrace();
             //TODO nepresiel wait();
             //TODO nepresiel wait(100);
         }

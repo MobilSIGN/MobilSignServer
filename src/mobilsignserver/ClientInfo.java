@@ -23,7 +23,7 @@ public class ClientInfo {
        this.mSocket = socket;
        this.mClientListener = new Listener(mSocket);
        this.mClientSender =   new Sender(mSocket);
-       
+        System.out.println("Vytvaram clientInfo");
     }
     
     protected void setSocket(Socket socket){
@@ -67,8 +67,8 @@ public class ClientInfo {
         return mFingerprint;
     }
     
-    public boolean pair(ClientInfo client)
-    {   
+    public boolean pair(ClientInfo client) {   
+        System.out.println("Parujem");
         //System.out.println("Pairing: " + client.pair.mSocket.getInetAddress().getHostAddress() + " <-> " + client.mSocket.getInetAddress().getHostAddress());
         if(client == null || this.mFingerprint == null || client.mFingerprint == null || this.mPair != null || client.mPair != null || !this.mFingerprint.equals(client.mFingerprint) || this == client) 
             return false;
