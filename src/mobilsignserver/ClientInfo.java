@@ -1,16 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package mobilsignserver;
 
 import java.net.Socket;
 import communicator.*;
 
-/**
- *
- * @author Marek Spalek <marekspalek@gmail.com>
- */
 public class ClientInfo {
     
     private Socket mSocket = null;
@@ -68,15 +60,12 @@ public class ClientInfo {
     }
     
     public boolean pair(ClientInfo client) {   
-        System.out.println("Parujem");
-        //System.out.println("Pairing: " + client.pair.mSocket.getInetAddress().getHostAddress() + " <-> " + client.mSocket.getInetAddress().getHostAddress());
         if(client == null || this.mFingerprint == null || client.mFingerprint == null || this.mPair != null || client.mPair != null || !this.mFingerprint.equals(client.mFingerprint) || this == client) 
             return false;
         
         this.mPair = client;
         client.mPair = this;
         
-        System.out.println("Clients paired: " + client.mPair.mSocket.getInetAddress().getHostAddress() + " <-> " + client.mSocket.getInetAddress().getHostAddress());
         this.mClientSender.sendMessage("RESP:paired");
         client.getClientSender().sendMessage("RESP:paired");        
         return true;

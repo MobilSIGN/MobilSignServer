@@ -1,18 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package mobilsignserver;
 
 import java.io.*;
 import java.net.*;
-import javax.net.ssl.SSLServerSocket;
-import javax.net.ssl.SSLServerSocketFactory;
 
-/**
- *
- * @author Marek Spalek <marekspalek@gmail.com>
- */
 public class MobilSignServer {
 
     //public static final String SERVER_HOSTNAME = "localhost";
@@ -20,16 +10,10 @@ public class MobilSignServer {
     public static final int LISTENING_PORT = 2002;
 
     public static void main(String[] args) {
-        System.setProperty("javax.net.ssl.keyStore", "signKeyStore");
-        System.setProperty("javax.net.ssl.keyStorePassword", "signproject123");
-
         // Open server socket for listening
         ServerSocket serversocket = null;
 
         try {
-//            SSLServerSocketFactory sslserversocketfactory =
-//                    (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
-//            serversocket = (SSLServerSocket) sslserversocketfactory.createServerSocket(LISTENING_PORT);
             serversocket = new ServerSocket(LISTENING_PORT);
 
             System.out.println("Server started on port " + LISTENING_PORT);
@@ -47,12 +31,9 @@ public class MobilSignServer {
         while (true) {
             try {
                 Socket socket = serversocket.accept();
-                //Socket socket = serverSocket.accept();
                 ClientInfo clientInfo = new ClientInfo(socket);
                 clientInfo.getClientListener().start();
-                System.out.println("Start ClientListnere");
                 clientInfo.getClientSender().start();
-                System.out.println("Start ClientSender");
                 serverDispatcher.addClient(clientInfo);
                 synchronized (serverDispatcher) {
                     serverDispatcher.notify();

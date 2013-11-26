@@ -1,16 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package mobilsignserver;
 
-import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-//import communicator.*;
-/**
- *
- * @author Marek Spalek <marekspalek@gmail.com>
- */
+
 public class ServerDispatcher extends Thread {
 
     private CopyOnWriteArrayList<ClientInfo> mClients;
@@ -23,7 +14,6 @@ public class ServerDispatcher extends Thread {
      * Adds given client to the server's client list.
      */
     public void addClient(ClientInfo aClientInfo) {
-        System.out.println("Client connected: " + aClientInfo.getSocket().getInetAddress().getHostAddress());
         mClients.add(aClientInfo);
     }
 
@@ -38,7 +28,6 @@ public class ServerDispatcher extends Thread {
                 aClientInfo.getPairedClient().setPairedClient(null);
             }
             mClients.remove(aClientInfo);
-            System.out.println("Client disconnected: " + aClientInfo.getSocket().getInetAddress().getHostAddress());
         }
     }
 
@@ -106,16 +95,12 @@ public class ServerDispatcher extends Thread {
     public synchronized void run() {
         try {
             while (true) {
-                System.out.println("CITAM");
                 if (mClients.isEmpty()) {
-                    System.out.println("Cakam");
                     wait();
                 }
                 for (ClientInfo client : mClients) {
-                    System.out.println("Idem cez klienta");
                     if (client.getClientListener().hasMessage()) {
                         this.dispatchMessage(client);
-                        System.out.println("Poslal som spravu na spracovanie");
                     }
                     wait(10);
                 }
