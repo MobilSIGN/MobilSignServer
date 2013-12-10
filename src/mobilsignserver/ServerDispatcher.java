@@ -24,9 +24,12 @@ public class ServerDispatcher extends Thread {
     public void deleteClient(ClientInfo aClientInfo) {
         if (mClients.contains(aClientInfo)) { //ak sa klient nachadza na serveri
             if (aClientInfo.getPairedClient() != null) {
-                aClientInfo.setPairedClient(null);
+                System.out.println("Bol sparovany");
+                aClientInfo.getPairedClient().getClientSender().sendMessage("RESP:unpaired");
                 aClientInfo.getPairedClient().setPairedClient(null);
+                aClientInfo.setPairedClient(null);
             }
+            System.out.println("Odoberam clienta");
             mClients.remove(aClientInfo);
         }
     }
@@ -57,8 +60,12 @@ public class ServerDispatcher extends Thread {
             System.out.println("Som dispatcher, prislo mi PAIR");
             String fingerprint = aMessage.substring(5);
             ClientInfo pairClient = this.clientWithFingerprint(fingerprint);
-            aClientInfo.setFingerprint(fingerprint);
-            aClientInfo.pair(pairClient);
+            if (pairClient != null) {
+                aClientInfo.setFingerprint(fingerprint);
+                aClientInfo.pair(pairClient);
+            } else {
+                System.out.println("Nepodarilo sa sparovat");
+            }
             return;
         }
         System.out.println("Bad request! [" + aMessage + "]");
@@ -99,8 +106,12 @@ public class ServerDispatcher extends Thread {
                     wait();
                 }
                 for (ClientInfo client : mClients) {
-                    if (client.getClientListener().hasMessage()) {
-                        this.dispatchMessage(client);
+                    if (client.getClientListener().isAlive()) {
+                        if (client.getClientListener().hasMessage()) {
+                            this.dispatchMessage(client);
+                        }
+                    } else {
+                        deleteClient(client);
                     }
                     wait(10);
                 }

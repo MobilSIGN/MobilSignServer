@@ -18,6 +18,10 @@ public class ClientInfo {
         System.out.println("Vytvaram clientInfo");
     }
     
+    public boolean jeAktivny() {
+        return true;
+    }
+    
     protected void setSocket(Socket socket){
         this.mSocket = socket;
     }
