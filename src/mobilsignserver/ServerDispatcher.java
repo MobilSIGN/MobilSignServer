@@ -25,7 +25,7 @@ public class ServerDispatcher extends Thread {
         if (mClients.contains(aClientInfo)) { //ak sa klient nachadza na serveri
             if (aClientInfo.getPairedClient() != null) {
                 System.out.println("Bol sparovany");
-                aClientInfo.getPairedClient().getClientSender().sendMessage("RESP:unpaired");
+                aClientInfo.getPairedClient().getClientSender().putMesssageToQueue("RESP:unpaired");
                 aClientInfo.getPairedClient().setPairedClient(null);
                 aClientInfo.setPairedClient(null);
             }
@@ -48,7 +48,7 @@ public class ServerDispatcher extends Thread {
         System.out.println(aMessage);
         if (aMessage.length() > 5 && aMessage.substring(0, 5).equals("SEND:")) {
             if (aClientInfo.getPairedClient() != null) {
-                aClientInfo.getPairedClient().getClientSender().sendMessage(aMessage);
+                aClientInfo.getPairedClient().getClientSender().putMesssageToQueue(aMessage);
                 System.out.println("Su sparovani a poslal som spravu");
             } else {
                 System.out.println("Client is not paired!");
@@ -78,7 +78,7 @@ public class ServerDispatcher extends Thread {
      */
     private void sendMessageToAllClients(String aMessage) {
         for (ClientInfo client : mClients) {
-            client.getClientSender().sendMessage(aMessage);
+            client.getClientSender().putMesssageToQueue(aMessage);
         }
     }
 

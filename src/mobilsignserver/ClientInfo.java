@@ -70,8 +70,8 @@ public class ClientInfo {
         this.mPair = client;
         client.mPair = this;
         
-        this.mClientSender.sendMessage("RESP:paired");
-        client.getClientSender().sendMessage("RESP:paired");        
+        this.mClientSender.putMesssageToQueue("RESP:paired");
+        client.getClientSender().putMesssageToQueue("RESP:paired");        
         return true;
     }
     
