@@ -59,13 +59,9 @@ public class ServerDispatcher extends Thread {
         if (aMessage.length() > 5 && aMessage.substring(0, 5).equals("PAIR:")) {
             System.out.println("Som dispatcher, prislo mi PAIR");
             String fingerprint = aMessage.substring(5);
-            ClientInfo pairClient = this.clientWithFingerprint(fingerprint);
-            if (pairClient != null) {
-                aClientInfo.setFingerprint(fingerprint);
-                aClientInfo.pair(pairClient);
-            } else {
-                System.out.println("Nepodarilo sa sparovat");
-            }
+            ClientInfo pairClient = this.clientWithFingerprint(fingerprint);           
+            aClientInfo.setFingerprint(fingerprint);
+            aClientInfo.pair(pairClient);            
             return;
         }
         System.out.println("Bad request! [" + aMessage + "]");
