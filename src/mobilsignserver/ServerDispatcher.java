@@ -46,7 +46,7 @@ public class ServerDispatcher extends Thread {
             return;
         }
         System.out.println(aMessage);
-        if (aMessage.length() > 5 && aMessage.substring(0, 5).equals("SEND:")) {
+        if (aMessage.length() > 5 && (aMessage.substring(0, 5).equals("SEND:")) || aMessage.substring(0, 5).equals("MPUB:")) {
             if (aClientInfo.getPairedClient() != null) {
                 aClientInfo.getPairedClient().getClientSender().putMesssageToQueue(aMessage);
                 System.out.println("Su sparovani a poslal som spravu");
