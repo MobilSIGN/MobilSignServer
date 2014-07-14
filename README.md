@@ -74,3 +74,6 @@ Aplikácie dokážu odfotiť QR kód, z ktorého dokážu získať kľúč použ
 ###Súčasný stav – server a počítačový klient
 Server je implementovaný v programovacom jazyku Java a umožňuje spárovanie klientov a následnú komunikáciu medzi spárovanými klientami.
 Počítačový klient je hlavne pre zachovanie zachovanie podpory viacerých platforiem implementovaný v jazyku Java. Dokáže vytvárať kľúčové páry a následne modulus verejného kľúča zakódovať do QR kódu. Prostredníctvom navrhnutého protokolu a vygenerovaného komunikačného kľúča sa vie aplikácia spárovať a komunikovať šifrovane s mobilnými klientami a posielať testovacie správy.
+
+###Súčasný stav – smart karty
+Pre smart karty typu Java Card sú vytvorené jednoduché applety na testovanie smart karty, ktoré je možné nahrať na smart kartu a získať odpoveď. Je vytvorená aj jednoduchá klientska aplikácia v Jave na komunikáciu smart karty s počítačom. Táto aplikácia dokáže vypísať odpoveď pri spojení sa so smart kartou alebo vypíše chybovú hlášku podľa získanej odpovede. Funkčnosť appletov bola testovaná na karte Gemal-to TOP IM GX4 na platforme Java Card.
