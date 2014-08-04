@@ -75,5 +75,31 @@ Aplikácie dokážu odfotiť QR kód, z ktorého dokážu získať kľúč použ
 Server je implementovaný v programovacom jazyku Java a umožňuje spárovanie klientov a následnú komunikáciu medzi spárovanými klientami.
 Počítačový klient je hlavne pre zachovanie zachovanie podpory viacerých platforiem implementovaný v jazyku Java. Dokáže vytvárať kľúčové páry a následne modulus verejného kľúča zakódovať do QR kódu. Prostredníctvom navrhnutého protokolu a vygenerovaného komunikačného kľúča sa vie aplikácia spárovať a komunikovať šifrovane s mobilnými klientami a posielať testovacie správy.
 
-###Súčasný stav – smart karty
-Pre smart karty typu Java Card sú vytvorené jednoduché applety na testovanie smart karty, ktoré je možné nahrať na smart kartu a získať odpoveď. Je vytvorená aj jednoduchá klientska aplikácia v Jave na komunikáciu smart karty s počítačom. Táto aplikácia dokáže vypísať odpoveď pri spojení sa so smart kartou alebo vypíše chybovú hlášku podľa získanej odpovede. Funkčnosť appletov bola testovaná na karte Gemal-to TOP IM GX4 na platforme Java Card.
+###Smart karty
+Smart karta je veľkosti kreditnej karty a je programovateľná. Po-známe niekoľko typov týchto kariet ako napríklad: Java karty, Basic karty, .NET karty, MULTOS karty. Tieto karty sú kontaktné, bezkon-taktné a hybridné. Niektoré sú chránené PIN kódom. Smart karta obsa-huje procesor, pamäť (EEPROM), RAM pamäť, náhodný generátor a kryptografický koprocesor (RSA). Výhodou týchto kariet je rýchly kryptografický koprocesor, generovanie asymetrického kľúča na karte, kvalitný a rýchly náhodný generátor a vysoká úroveň zabezpečenia. Tieto karty sa využívajú vo viacerých oblastiach: bankovníctvo, identi-fikačné karty, riadenie prístupu, atď.
+
+###Použitá smart karta
+Gemalto TOP IM GX4 (Java card)
+#####Java Card 2.2.1
+o	Global Platform 2.1.1
+o	Symetrické šifry: 3DES, AES (128, 192, 256)
+o	Asymetrické šifry: RSA až do 2048 bitov
+o	Hašovacie funkcie: SHA-1
+o	Generovanie asymetrického kľúčového páru na karte
+o	Protokoly: T=0 bajtovo orientovaný
+ 		      T=1 blokovo orientovaný
+o	Baud rate až do 230 kilobitov za sekundu
+o	EEPROM 72 kilobajtov
+o	APDU buffer: 261 bajtov
+o	Perzistentná halda: 68 kilobajtov
+o	Garbage collector
+
+###Vývoj appletov pre smart karty
+Pre vývoj appletov pre smart karty je potrebných viacero nástro-jov. Medzi tieto nástroje patrí Java Development Kit 1.3 (JDK), ktorý je potrebný na kompiláciu appletu napísaného v programovacom jazyku Java a vytvorenom vo vývojovom prostredí NetBeans. Ďalší nástroj je Java Card Development Kit 2.2.1 (JCDK) a pomocou neho je súbor s koncovkou *.class skonvertovaný na súbor s koncovkou *.jar/.cap. JCDK musí byť vo verzii kompatibilnej s kartou alebo v nižšej verzii, v našom prípade je táto verzia 2.2.1. Posledný potrebný nástroj je GPShell, ktorý je potrebný na nahratie súboru na smart kartu. S apple-tom na karte sa dá komunikovať pomocou APDU (Application Protocol Data Unit) príkazov. APDU je základný komunikačný datagram, ktorý môže niesť až 260 bajtov dát. Jeho hlavička sa skladá s triedy inštrukcie (CLA), čísla inštrukcie (INS), voliteľných dát (P1, P2), dĺžky prichá-dzajúcich dát (LC), používateľských dát (DATA) a očakávanej dĺžky výstupných dát (LE). Na obrázku Fig. 7 je vidieť niekoľko typov hlavi-čiek APDU datagramu.
+
+![Typy APDU datagramu](http://i60.tinypic.com/nla4qo.gif "Fig. 7. Typy APDU datagramu")
+
+Fig. 7. Typy APDU datagramu
+
+Pri práci so smart kartou je potrebné zadať kľúč, ktorý je v našom prípade pre kartu Gemalto TOP IM GX4 (47 45 4D 58 50 52 45 53 53 4F 53 41 4D 50 4C 45). Po zadaní tohto kľúča je vytvorený za-bezpečený kanál medzi klientskou aplikáciou a smart kartou a je možné začať so smart kartou pracovať.
+Global platform je verejne dostupná špecifikácia pre smart karty, ktorá pokrýva životný cyklus smart karty, inštaláciu appletov, vzdia-lenú správu karty a zabezpečenú komunikáciu medzi smart kartou a užívateľskou aplikáciou.
