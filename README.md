@@ -79,20 +79,20 @@ Počítačový klient je hlavne pre zachovanie zachovanie podpory viacerých pla
 Smart karta je veľkosti kreditnej karty a je programovateľná. Po-známe niekoľko typov týchto kariet ako napríklad: Java karty, Basic karty, .NET karty, MULTOS karty. Tieto karty sú kontaktné, bezkon-taktné a hybridné. Niektoré sú chránené PIN kódom. Smart karta obsa-huje procesor, pamäť (EEPROM), RAM pamäť, náhodný generátor a kryptografický koprocesor (RSA). Výhodou týchto kariet je rýchly kryptografický koprocesor, generovanie asymetrického kľúča na karte, kvalitný a rýchly náhodný generátor a vysoká úroveň zabezpečenia. Tieto karty sa využívajú vo viacerých oblastiach: bankovníctvo, identi-fikačné karty, riadenie prístupu, atď.
 
 ###Použitá smart karta
-Gemalto TOP IM GX4 (Java card)
-Java Card 2.2.1
-Global Platform 2.1.1
-Symetrické šifry: 3DES, AES (128, 192, 256)
-Asymetrické šifry: RSA až do 2048 bitov
-Hašovacie funkcie: SHA-1
-Generovanie asymetrického kľúčového páru na karte
-Protokoly: T=0 bajtovo orientovaný
+* Gemalto TOP IM GX4 (Java card)
+* Java Card 2.2.1
+* Global Platform 2.1.1
+* Symetrické šifry: 3DES, AES (128, 192, 256)
+* Asymetrické šifry: RSA až do 2048 bitov
+* Hašovacie funkcie: SHA-1
+* Generovanie asymetrického kľúčového páru na karte
+* Protokoly: T=0 bajtovo orientovaný
  		        T=1 blokovo orientovaný
-Baud rate až do 230 kilobitov za sekundu
-EEPROM 72 kilobajtov
-APDU buffer: 261 bajtov
-Perzistentná halda: 68 kilobajtov
-Garbage collector
+* Baud rate až do 230 kilobitov za sekundu
+* EEPROM 72 kilobajtov
+* APDU buffer: 261 bajtov
+* Perzistentná halda: 68 kilobajtov
+* Garbage collector
 
 ###Vývoj appletov pre smart karty
 Pre vývoj appletov pre smart karty je potrebných viacero nástro-jov. Medzi tieto nástroje patrí Java Development Kit 1.3 (JDK), ktorý je potrebný na kompiláciu appletu napísaného v programovacom jazyku Java a vytvorenom vo vývojovom prostredí NetBeans. Ďalší nástroj je Java Card Development Kit 2.2.1 (JCDK) a pomocou neho je súbor s koncovkou *.class skonvertovaný na súbor s koncovkou *.jar/.cap. JCDK musí byť vo verzii kompatibilnej s kartou alebo v nižšej verzii, v našom prípade je táto verzia 2.2.1. Posledný potrebný nástroj je GPShell, ktorý je potrebný na nahratie súboru na smart kartu. S apple-tom na karte sa dá komunikovať pomocou APDU (Application Protocol Data Unit) príkazov. APDU je základný komunikačný datagram, ktorý môže niesť až 260 bajtov dát. Jeho hlavička sa skladá s triedy inštrukcie (CLA), čísla inštrukcie (INS), voliteľných dát (P1, P2), dĺžky prichá-dzajúcich dát (LC), používateľských dát (DATA) a očakávanej dĺžky výstupných dát (LE). Na obrázku Fig. 7 je vidieť niekoľko typov hlavi-čiek APDU datagramu.
