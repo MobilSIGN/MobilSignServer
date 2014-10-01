@@ -1,5 +1,6 @@
 package mobilsignserver;
 
+import communicator.Util;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ServerDispatcher extends Thread {
@@ -24,12 +25,10 @@ public class ServerDispatcher extends Thread {
     public void deleteClient(ClientInfo aClientInfo) {
         if (mClients.contains(aClientInfo)) { //ak sa klient nachadza na serveri
             if (aClientInfo.getPairedClient() != null) {
-                System.out.println("Bol sparovany");
                 aClientInfo.getPairedClient().getClientSender().putMesssageToQueue("RESP:unpaired");
                 aClientInfo.getPairedClient().setPairedClient(null);
                 aClientInfo.setPairedClient(null);
             }
-            System.out.println("Odoberam clienta");
             mClients.remove(aClientInfo);
         }
     }
@@ -43,28 +42,48 @@ public class ServerDispatcher extends Thread {
     public void dispatchMessage(ClientInfo aClientInfo) {
         String aMessage = aClientInfo.getClientListener().getMessage();
         if (aMessage == null) { //dodatocna kontrola
+            System.err.println("Prisla NULL sprava");
             return;
         }
-        System.out.println(aMessage);
-        if (aMessage.length() > 5 && (aMessage.substring(0, 5).equals("SEND:")) || aMessage.substring(0, 5).equals("MPUB:")) {
-            if (aClientInfo.getPairedClient() != null) {
-                aClientInfo.getPairedClient().getClientSender().putMesssageToQueue(aMessage);
-                System.out.println("Su sparovani a poslal som spravu");
-            } else {
-                System.out.println("Client is not paired!");
-            }
 
+        //pokial sprava obsahuje len typ a nic viac(malo znakov)
+        if (aMessage.length() <= 5) {
+            System.err.println("Prazdna sprava iba s typom");
             return;
         }
-        if (aMessage.length() > 5 && aMessage.substring(0, 5).equals("PAIR:")) {
-            System.out.println("Som dispatcher, prislo mi PAIR");
-            String fingerprint = aMessage.substring(5);
-            ClientInfo pairClient = this.clientWithFingerprint(fingerprint);           
-            aClientInfo.setFingerprint(fingerprint);
-            aClientInfo.pair(pairClient);            
-            return;
+
+        //v zavislosti od typu spravy
+        switch (this.getMessageType(aMessage)) {
+            case Util.TYPE_SEND: //send sprava
+            case Util.TYPE_MPUB: //mobile public key
+                if (aClientInfo.getPairedClient() != null) {
+                    aClientInfo.getPairedClient().getClientSender().putMesssageToQueue(aMessage);
+                } else {
+                    System.err.println("Client is not paired!");
+                }
+                break;
+
+            case Util.TYPE_PAIR: //pair request                
+                String fingerprint = aMessage.substring(5);
+                ClientInfo pairClient = this.clientWithFingerprint(fingerprint);
+                aClientInfo.setFingerprint(fingerprint);
+                aClientInfo.pair(pairClient);
+                break;
+
+            default:
+                System.err.println("Neimplementovany typ spravy");
+                break;
         }
-        System.out.println("Bad request! [" + aMessage + "]");
+    }
+
+    /**
+     * Metoda vrati typ spravy
+     *
+     * @param message - cela sprava, ktorej typ ideme zistit
+     * @return string reprezentacia typu spravy
+     */
+    private String getMessageType(String message) {
+        return message.substring(0, 5);
     }
 
     /**
@@ -79,7 +98,6 @@ public class ServerDispatcher extends Thread {
     }
 
     private ClientInfo clientWithFingerprint(String fingerprint) {
-        System.out.println("Clients: " + mClients.size());
         for (Object object : mClients) {
             ClientInfo client = (ClientInfo) object;
             if (client.getFingerprint() != null && client.getFingerprint().equals(fingerprint)) {
@@ -113,10 +131,7 @@ public class ServerDispatcher extends Thread {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Dispatcher exception");
-            e.printStackTrace();
-            //TODO nepresiel wait();
-            //TODO nepresiel wait(100);
+            System.err.println("Dispatcher exception");                        
         }
     }
 }
